@@ -49,16 +49,45 @@ char keys[6][6] = {                           //check arduinos HID.cpp for more 
    2P3,  1DN,  1UP,  2UP,  2LF,  1K3,  1RG}
 };
 */
-short state[8][8] = {                           /*button states and button indexes for joystick*/
-  {0,  1,  2,  3,  4,  5,  6,  7},
-  {0,  0,  8,  9, 11, 12, 13, 14},
-  {0,  0,  0, 15, 16, 17, 18, 19},
-  {0,  0,  0,  0, 20, 21, 22, 23},
-  {0,  0,  0,  0,  0, 24, 25, 26},
-  {0,  0,  0,  0,  0,  0, 27, 28},
-  {0,  0,  0,  0,  0,  0,  0, 29},
-  {0,  0,  0,  0,  0,  0,  0,  0}
+short state[11][11] = {                           /*button states and button indexes for joystick*/
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0},
+  {0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0}
 };
+int bttns[11][11] = {                           /*button states and button indexes for joystick*/
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //0
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //1
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //2
+  { 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0 }, //3
+  { 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0 }, //4
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //5
+  { 0, 5, 10, 9, 0, 0, 0, 0, 0, 0, 0 }, //6
+  { 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 0 }, //7
+  { 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0 }, //8
+  { 0, 0, 8, 7, 0, 0, 3, 14, 11, 0, 0 }, //9
+  { 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0 }, //10
+};
+/*short bttns[11][11] = {                           
+  { 1,   2,   3,  4,  5,   6,  7,   8,  9, 10, 11},
+  { 11, 12,  13, 14, 15,  16, 17,  18, 19, 10, 11 },
+  { 21, 22,  23, 24, 25,  26,  27,  28, 29, 10, 11 },
+  { 31, 32,  33, 34, 35,  36,  37,  38, 39, 10, 11 },
+  { 41, 42,  43, 44, 45,  46,  47,  48, 49, 10, 11 },
+  { 51, 52,  53, 54, 55,  56,  57,  58, 59, 10, 11 },
+  { 61, 62,  63, 64, 65,  66,  67,  68, 69, 10, 11 },
+  { 71, 72,  73, 74, 75,  76,  77,  78, 79, 10, 11 },
+  { 81, 82,  83, 84, 85,  86,  87,  88, 89, 10, 11 },
+  { 91, 92,  93, 94,  95,  96,  97,  98, 99, 10, 11 },
+  { 101,  2,  3,  4,  5,  6,  7,  8, 9, 10, 11 }
+};*/
 
 
 #include "Joystick.h"
@@ -70,15 +99,12 @@ boolean blnTurbo = true;                            // By default enable turbo (
 
 void setup() 
 {
-  delay(3000);
   Serial.begin(115200);
-  delay(3000);
-  Serial.println("ArcadeMachine Joystick Simulator");
-  
-  for (int x = 0; x<8; x++)
+  for (int x = 0; x<=13; x++)
   {
       pinMode(x, INPUT_PULLUP);
   }  
+  Serial.println("ArcadeMachine Joystick Simulator");
   Joystick.begin();
 }
 
@@ -86,14 +112,14 @@ void loop()
 {  
   //delay(50);
   //Serial.println("loop...");
-  for (int k=0; k<8; k++)
+  for (int k=0; k<12; k++)
   {
-    pinMode(k, OUTPUT);
-    digitalWrite(k, LOW);
-    for (int j = 0; j<8; j++)
+    pinMode(k+2, OUTPUT);
+    digitalWrite(k+2, LOW);
+    for (int j = 0; j<12; j++)
     {
       if (j==k || j>k) continue;
-      if ( digitalRead(j) == LOW ) //  pressed
+      if ( digitalRead(j+2) == LOW ) //  pressed
       {
         /*Serial.print("Button ");
         Serial.print(k+j);
@@ -107,9 +133,9 @@ void loop()
         if (state[k][j] == false)
         {
           state[k][j] = true;
-          Joystick.pressButton(state[j][k]);
+          Joystick.pressButton(bttns[j][k]);
           Serial.print("Button ");
-          Serial.print(k+j);
+          Serial.print(bttns[k][j]);
           Serial.print(" state ");
           Serial.print(state[k][j]);
           Serial.print(" Pin ");
@@ -124,18 +150,18 @@ void loop()
         if (state[k][j] == true)
         {
           state[k][j] = false;
-        Serial.print("Button ");
-        Serial.print(k+j);
-        Serial.print(" state ");
-        Serial.print(state[k][j]);
-        Serial.print(" Pin ");
-        Serial.print(k);
-        Serial.print(" connected to ");
-        Serial.println(j);
-          Joystick.releaseButton(state[j][k]);
+          Serial.print("Button ");
+          Serial.print(bttns[k][j]);
+          Serial.print(" state ");
+          Serial.print(state[k][j]);
+          Serial.print(" Pin ");
+          Serial.print(k);
+          Serial.print(" connected to ");
+          Serial.println(j);
+          Joystick.releaseButton(bttns[j][k]);
         }
       }
     }
-    pinMode(k, INPUT_PULLUP);
+    pinMode(k+2, INPUT_PULLUP);
   }  
 }
